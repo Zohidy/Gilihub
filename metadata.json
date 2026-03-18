@@ -1,0 +1,7 @@
+{
+  "name": "GiliHub",
+  "description": "Pusat layanan wisata modern di Gili Trawangan: Sewa sepeda, snorkeling, dan AI Travel Guide.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

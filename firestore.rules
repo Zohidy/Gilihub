@@ -1,0 +1,89 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: bookings
+    // Fields:
+    //   - itemId: string (required, < 100 chars)
+    //   - itemName: string (required, < 100 chars)
+    //   - customerName: string (required, < 100 chars)
+    //   - customerPhone: string (required, < 20 chars)
+    //   - pickupLocation: string (required, < 200 chars)
+    //   - date: string (required, < 50 chars)
+    //   - guests: number (optional, > 0)
+    //   - duration: number (optional, > 0)
+    //   - durationType: string (optional, < 20 chars)
+    //   - createdAt: timestamp (required, immutable)
+    //   - status: string (pending, confirmed, cancelled)
+    //   - userId: string (required)
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "zohidydy@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isValidBooking(data) {
+      return data.keys().hasAll(['itemId', 'itemName', 'customerName', 'customerPhone', 'pickupLocation', 'date', 'userId', 'status', 'createdAt']) &&
+             data.itemId is string && data.itemId.size() > 0 && data.itemId.size() < 100 &&
+             data.itemName is string && data.itemName.size() > 0 && data.itemName.size() < 100 &&
+             data.customerName is string && data.customerName.size() > 0 && data.customerName.size() < 100 &&
+             data.customerPhone is string && data.customerPhone.size() > 0 && data.customerPhone.size() < 20 &&
+             data.pickupLocation is string && data.pickupLocation.size() > 0 && data.pickupLocation.size() < 200 &&
+             data.date is string && data.date.size() > 0 && data.date.size() < 50 &&
+             data.status in ['pending', 'confirmed', 'cancelled'] &&
+             data.userId is string && data.userId.size() > 0 &&
+             data.createdAt is timestamp &&
+             (!('guests' in data) || (data.guests is number && data.guests > 0)) &&
+             (!('duration' in data) || (data.duration is number && data.duration > 0)) &&
+             (!('durationType' in data) || (data.durationType is string && data.durationType in ['days', 'hours']));
+    }
+
+    match /bookings/{bookingId} {
+      // Allow authenticated users to create their own bookings
+      allow create: if isAuthenticated() && 
+                       isValidBooking(request.resource.data) && 
+                       request.resource.data.userId == request.auth.uid &&
+                       hasOnlyAllowedFields(['itemId', 'itemName', 'customerName', 'customerPhone', 'pickupLocation', 'date', 'guests', 'duration', 'durationType', 'status', 'createdAt', 'userId', 'adminNotes']);
+      
+      // Admin can read all, users can read their own
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      
+      // Admin can update all, users can only update their own status to 'cancelled'
+      allow update: if isAdmin() || (isOwner(resource.data.userId) && 
+                                     request.resource.data.userId == resource.data.userId &&
+                                     request.resource.data.createdAt == resource.data.createdAt &&
+                                     request.resource.data.status == 'cancelled' && 
+                                     resource.data.status == 'pending');
+      
+      allow delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      allow write: if isAdmin();
+    }
+    
+    match /test/connection {
+      allow read: if true;
+    }
+  }
+}

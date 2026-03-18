@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-island-teal: #008080;
+  --color-island-deep: #002B2B;
+  --color-island-sand: #F7F3F0;
+  --color-island-coral: #FF7F50;
+  --color-island-gold: #D4AF37;
+}
+
+@layer base {
+  body {
+    @apply font-sans text-island-deep bg-[#FDFCFB];
+  }
+  
+  h1, h2, h3, h4 {
+    @apply font-display font-bold tracking-tight;
+  }
+}
+
+.island-gradient {
+  background: linear-gradient(145deg, #00a3a3, #007373);
+  box-shadow: 
+    inset 1px 1px 2px rgba(255, 255, 255, 0.4),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3),
+    3px 3px 6px rgba(0, 0, 0, 0.2),
+    6px 6px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+  @apply bg-[#F7F3F0] border border-white/60;
+  background: linear-gradient(145deg, #ffffff, #e6e2df);
+  box-shadow: 
+    12px 12px 24px #d9d5d2,
+    -12px -12px 24px #ffffff,
+    inset 1px 1px 0px #ffffff;
+  position: relative;
+}
+
+.glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+}
+
+.pill-button {
+  @apply px-8 py-3 rounded-full font-semibold transition-all duration-300 active:scale-95;
+  background: linear-gradient(145deg, #ffffff, #e6e2df);
+  box-shadow: 
+    6px 6px 12px #d9d5d2,
+    -6px -6px 12px #ffffff,
+    inset 1px 1px 2px #ffffff;
+  color: var(--color-island-deep);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.pill-button:active {
+  background: #F7F3F0;
+  box-shadow: 
+    inset 6px 6px 12px #d9d5d2,
+    inset -6px -6px 12px #ffffff;
+  transform: translateY(2px);
+}
+
+.skeuo-inner {
+  background: #F7F3F0;
+  box-shadow: 
+    inset 6px 6px 12px #d9d5d2,
+    inset -6px -6px 12px #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.skeuo-outer {
+  background: linear-gradient(145deg, #ffffff, #e6e2df);
+  box-shadow: 
+    8px 8px 16px #d9d5d2,
+    -8px -8px 16px #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.skeuo-pressed {
+  box-shadow: 
+    inset 4px 4px 8px #d1cfcc,
+    inset -4px -4px 8px #ffffff;
+}
+
+.skeuo-groove {
+  background: #F7F3F0;
+  box-shadow: 
+    inset 2px 2px 4px #d9d5d2,
+    inset -2px -2px 4px #ffffff,
+    1px 1px 0px #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+.skeuo-rim {
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0.5px 0.5px 1px rgba(0, 0, 0, 0.1),
+    inset 0.5px 0.5px 1px rgba(255, 255, 255, 1);
+}
+
+.skeuo-text {
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+.skeuo-text-recessed {
+  color: rgba(0, 43, 43, 0.7);
+  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1), 1px 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+@layer utilities {
+  .mobile-bottom-sheet {
+    @apply fixed bottom-0 left-0 right-0 z-[110] bg-white rounded-t-[3rem] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] p-8 pb-12;
+  }
+  
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}

@@ -1,0 +1,29 @@
+{
+  "entities": {
+    "Booking": {
+      "title": "Booking",
+      "description": "A rental or tour booking request",
+      "type": "object",
+      "properties": {
+        "itemId": { "type": "string" },
+        "itemName": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "pickupLocation": { "type": "string" },
+        "date": { "type": "string" },
+        "guests": { "type": "number" },
+        "duration": { "type": "number" },
+        "durationType": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "cancelled"] }
+      },
+      "required": ["itemId", "itemName", "customerName", "customerPhone", "date", "pickupLocation"]
+    }
+  },
+  "firestore": {
+    "bookings": {
+      "schema": "Booking",
+      "description": "Collection of all booking requests"
+    }
+  }
+}
